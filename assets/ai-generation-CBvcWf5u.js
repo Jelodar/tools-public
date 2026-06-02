@@ -1,0 +1,3 @@
+const l="If you use <think>, be technical and concise; keep it under 25 words, then answer immediately.";function o(a="",e={}){const t=Math.max(120,Math.min(2400,Number(e.maxChars)||1200)),i=String(a||"").split(/\n+/).map(r=>r.trim()).filter(Boolean).join(`
+`).slice(0,t).trim();return[e.thinking?l:"",i].filter(Boolean).join(`
+`)}function f(a=""){const e=String(a||"");let t=-1,i=0,r=!1,c=!1;for(let n=0;n<e.length;n+=1){const s=e[n];if(t===-1){s==="{"&&(t=n,i=1);continue}if(r){c?c=!1:s==="\\"?c=!0:s==='"'&&(r=!1);continue}if(s==='"'){r=!0;continue}if(s==="{"){i+=1;continue}if(s==="}"&&(i-=1,i===0))return{jsonText:e.slice(t,n+1),prefix:e.slice(0,t),suffix:e.slice(n+1),start:t,end:n+1}}return null}export{o as b,f as e};

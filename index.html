@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jelodar Tools</title>
+    <meta name="description" content="Overview of the available browser-native tools and studios.">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/monaco-editor@0.41.0/min/vs/editor/editor.main.css">
+    <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin">
+    <meta http-equiv="Cross-Origin-Embedder-Policy" content="require-corp">
+  <script type="module" crossorigin src="/assets/index-C4lglzE7.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-DYE9XuPo.css">
+</head>
+<body>
+    <div id="mobile-shell-bar" class="mobile-shell-bar">
+        <button id="shell-menu-toggle" class="shell-menu-toggle" type="button" title="Navigation">
+            <span class="shell-menu-icon">
+                <span></span>
+                <span></span>
+                <span></span>
+            </span>
+            <span class="shell-menu-label">Menu</span>
+        </button>
+        <strong>Jelodar Tools</strong>
+    </div>
+    <div id="sidebar-backdrop" class="sidebar-backdrop"></div>
+    <div id="app-layout">
+        <aside id="sidebar">
+            <div class="sidebar-header">
+                <svg viewBox="0 0 24 24" width="24" height="24" stroke="var(--accent-color)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+                <span>Jelodar Tools</span>
+            </div>
+            <div class="search-container">
+                <input type="text" id="sidebar-search" placeholder="Search suites, tools, keywords..." aria-label="Search tools">
+                <button id="search-clear" title="Clear search">✕</button>
+            </div>
+            <div class="sidebar-controls">
+                <button id="sidebar-collapse-toggle" class="sidebar-control-button" type="button" title="Collapse sidebar">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/><path d="M20 4v16"/></svg>
+                    <span>Collapse</span>
+                </button>
+                <button id="sidebar-autohide-toggle" class="sidebar-control-button" type="button" title="Auto-hide off">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16"/><path d="M4 12h10"/><path d="M4 17h16"/><path d="M18 10l3 2-3 2"/></svg>
+                    <span>Auto-hide</span>
+                </button>
+            </div>
+            <div id="global-tasks-host" class="global-tasks-host"></div>
+            <div id="sidebar-collections" class="sidebar-collections">
+                <div id="sidebar-favorites"></div>
+                <div id="sidebar-recents"></div>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="/" data-route data-name="dashboard" data-keywords="home overview start tools" data-active="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                    <span>Dashboard</span>
+                </a>
+                
+                <div class="nav-group">
+                    <div class="nav-group-title">Development<span>5</span></div>
+                    <div class="nav-sub-menu">
+                        
+                        <a href="/json-studio" data-route data-name="json studio" data-desc="format, validate, query, and export json from one workspace." data-keywords="json studio format, validate, query, and export json from one workspace. json format validate query jsonpath minify dev development formatting, validation, query work, patching, and large-document memory mode live in one json surface. compatibility route that opens json studio. json suite json studio json quick format focused formatting view inside json studio. json formatter pretty print beautify json studio format mode compatibility route that opens json quick format. json quick format" >
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                            <span>JSON Studio</span>
+                        </a>
+                        <a href="/code-studio" data-route data-name="code studio" data-desc="code workspace with multi-mode formatting, optimization, and ai assist." data-keywords="code studio code workspace with multi-mode formatting, optimization, and ai assist. editor monaco autocomplete ai code draft code studio formatter minify obfuscate dev development advanced code editing, multi-language formatting, javascript optimization, and ai synthesis live in one unified workspace. compatibility route that opens code studio. code editor web formatter format html, css, javascript, and related web text inside code studio. prettier sql formatter code studio formatter compatibility route that opens web formatter. web formatters web formatter format sql format format sql queries inside code studio formatter mode. sql pretty print query format compatibility route that opens sql format. sql format js minify minify javascript inside code studio optimizer mode. minifier compress terser javascript code studio optimizer compatibility route that opens js minify. js minify js obfuscation obfuscate javascript inside code studio optimizer mode. obfuscator protect rename compatibility route that opens js obfuscation. js obfuscator js obfuscation radix converter convert binary, octal, decimal, and hexadecimal values inside code studio. base binary hex octal decimal radix code studio utilities compatibility route that opens radix converter. base calc radix converter" >
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                            <span>Code Studio</span>
+                        </a>
+                        <a href="/diff-checker" data-route data-name="diff checker" data-desc="compare text and files side by side." data-keywords="diff checker compare text and files side by side. diff compare patch changes dev development" >
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 3h5v5"/><path d="M8 3H3v5"/><path d="M12 12V3"/><path d="M12 12l8 8"/><path d="M12 12l-8 8"/></svg>
+                            <span>Diff Checker</span>
+                        </a>
+                        <a href="/sqlite-manager" data-route data-name="sqlite manager" data-desc="inspect sqlite files and run queries locally." data-keywords="sqlite manager inspect sqlite files and run queries locally. sqlite database sql query db browser dev development" >
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+                            <span>SQLite Manager</span>
+                        </a>
+                        <a href="/hex-editor" data-route data-name="hex editor" data-desc="inspect, search, and patch file bytes with a large-file hex suite." data-keywords="hex editor inspect, search, and patch file bytes with a large-file hex suite. hex bytes binary file buffer patch search bookmark dev development" >
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+                            <span>Hex Editor</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="nav-group">
+                    <div class="nav-group-title">Security & Crypto<span>7</span></div>
+                    <div class="nav-sub-menu">
+                        
+                        <a href="/uuid-generator" data-route data-name="uuid generator" data-desc="generate uuid v4 and v7 identifiers locally." data-keywords="uuid generator generate uuid v4 and v7 identifiers locally. uuid guid v4 v7 crypto security & crypto" >
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21 2-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0 3 3L22 7l-3-3L15.5 7.5z"/></svg>
+                            <span>UUID Generator</span>
+                        </a>
+                        <a href="/key-pair-generator" data-route data-name="key pair generator" data-desc="generate rsa and ecdsa key pairs locally." data-keywords="key pair generator generate rsa and ecdsa key pairs locally. rsa ecdsa public key private key pem crypto security & crypto" >
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                            <span>Key Pair Generator</span>
+                        </a>
+                        <a href="/hash-generator" data-route data-name="hash generator" data-desc="hash text and files with common digest algorithms." data-keywords="hash generator hash text and files with common digest algorithms. sha md5 blake digest checksum crypto security & crypto" >
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></svg>
+                            <span>Hash Generator</span>
+                        </a>
+                        <a href="/jwt-decoder" data-route data-name="jwt decoder" data-desc="decode tokens and inspect claims locally." data-keywords="jwt decoder decode tokens and inspect claims locally. jwt token claims decode crypto security & crypto" >
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                            <span>JWT Decoder</span>
+                        </a>
+                        <a href="/certificate-inspector" data-route data-name="certificate inspector" data-desc="parse x.509 certificates and csrs." data-keywords="certificate inspector parse x.509 certificates and csrs. certificate csr x509 pem crypto security & crypto" >
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                            <span>Certificate Inspector</span>
+                        </a>
+                        <a href="/text-encryption" data-route data-name="text encryption" data-desc="encrypt and decrypt text in the browser." data-keywords="text encryption encrypt and decrypt text in the browser. encrypt decrypt aes secret crypto security & crypto" >
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                            <span>Text Encryption</span>
+                        </a>
+                        <a href="/password-generator" data-route data-name="password generator" data-desc="generate high-entropy passwords locally." data-keywords="password generator generate high-entropy passwords locally. password passphrase secret entropy crypto security & crypto" >
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21 2-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0 3 3L22 7l-3-3L15.5 7.5z"/></svg>
+                            <span>Password Generator</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="nav-group">
+                    <div class="nav-group-title">Media & Design<span>13</span></div>
+                    <div class="nav-sub-menu">
+                        
+                        <a href="/archive-tools" data-route data-name="archive tools" data-desc="bundle files and inspect archive queues locally." data-keywords="archive tools bundle files and inspect archive queues locally. zip archive bundle files media media & design" >
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polygon points="2 17 12 22 22 17"/><polygon points="2 12 12 17 22 12"/></svg>
+                            <span>Archive Tools</span>
+                        </a>
+                        <a href="/audio-tools" data-route data-name="audio tools" data-desc="generate tones and test audio output." data-keywords="audio tools generate tones and test audio output. tone frequency speaker test audio audio suite media media & design" >
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20"/><path d="M6 7v10"/><path d="M18 7v10"/><path d="M9 9v6"/><path d="M15 9v6"/></svg>
+                            <span>Audio Tools</span>
+                        </a>
+                        <a href="/video-studio" data-route data-name="video studio" data-desc="edit, subtitle, mix, and render local media with ffmpeg." data-keywords="video studio edit, subtitle, mix, and render local media with ffmpeg. ffmpeg video studio audio convert transcode crop subtitle mixer media media & design editing, subtitles, mixer composition, and ffmpeg render planning live in video studio while the legacy media-transcoder route remains available. compatibility route that opens video studio. media transcoder" >
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="2" y="3" rx="2" ry="2"/><path d="m22 8-6 4 6 4V8z"/></svg>
+                            <span>Video Studio</span>
+                        </a>
+                        <a href="/webmedia-studio" data-route data-name="web media studio" data-desc="inspect, convert, trim, and package media through webcodecs and mediabunny." data-keywords="web media studio inspect, convert, trim, and package media through webcodecs and mediabunny. webcodecs mediabunny remux transcode trim media inspect browser media media media & design" >
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="2" y="3" rx="2" ry="2"/><path d="m22 8-6 4 6 4V8z"/></svg>
+                            <span>Web Media Studio</span>
+                        </a>
+                        <a href="/image-optimizer" data-route data-name="image optimizer" data-desc="compress images to webp, mozjpeg, and avif." data-keywords="image optimizer compress images to webp, mozjpeg, and avif. image compression webp avif jpeg media media & design" >
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+                            <span>Image Optimizer</span>
+                        </a>
+                        <a href="/image-grid" data-route data-name="image grid" data-desc="tile local images into one exportable canvas." data-keywords="image grid tile local images into one exportable canvas. image grid collage tile images mosaic contact sheet media media & design" >
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+                            <span>Image Grid</span>
+                        </a>
+                        <a href="/image-forensics" data-route data-name="image forensics" data-desc="inspect images with ela, noise, clone, luminance, metadata, and string views." data-keywords="image forensics inspect images with ela, noise, clone, luminance, metadata, and string views. image forensic ela clone detection noise analysis metadata string extraction media media & design" >
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                            <span>Image Forensics</span>
+                        </a>
+                        <a href="/ambient-engine" data-route data-name="ambient engine" data-desc="generate ambient soundscapes with a live visualizer." data-keywords="ambient engine generate ambient soundscapes with a live visualizer. ambient nature rain soundscape audio suite media media & design" >
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20"/><path d="M6 7v10"/><path d="M18 7v10"/><path d="M9 9v6"/><path d="M15 9v6"/></svg>
+                            <span>Ambient Engine</span>
+                        </a>
+                        <a href="/sound-studio" data-route data-name="sound studio" data-desc="record, mix, and export multi-track audio." data-keywords="sound studio record, mix, and export multi-track audio. record mixer multitrack audio editor audio suite media media & design" >
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+                            <span>Sound Studio</span>
+                        </a>
+                        <a href="/screen-recorder" data-route data-name="screen recorder" data-desc="capture screen and audio locally." data-keywords="screen recorder capture screen and audio locally. screen capture recording display recording media media & design" >
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
+                            <span>Screen Recorder</span>
+                        </a>
+                        <a href="/exif-viewer" data-route data-name="exif viewer" data-desc="inspect metadata embedded in image files." data-keywords="exif viewer inspect metadata embedded in image files. exif metadata photo info media media & design" >
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                            <span>EXIF Viewer</span>
+                        </a>
+                        <a href="/svg-studio" data-route data-name="svg studio" data-desc="canvas-first svg creation suite with drawing tools, layers, gradients, and direct shape editing." data-keywords="svg studio canvas-first svg creation suite with drawing tools, layers, gradients, and direct shape editing. svg vector editor gradient shape diagram canvas layers figma draw media media & design svg editing, palettes, contrast checks, and css shadows share one visual workspace while legacy routes remain available. compatibility route that opens svg studio. svg editor svg studio svg studio alias tokens interface palette contrast shadow design hex color rgb hsl box shadow css effect generator" >
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+                            <span>SVG Studio</span>
+                        </a>
+                        <a href="/pdf-tools" data-route data-name="pdf tools" data-desc="merge, reorder, rotate, and export pdf pages locally." data-keywords="pdf tools merge, reorder, rotate, and export pdf pages locally. pdf merge pdf documents pages rotate media media & design" >
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 6.1H3"/><path d="M21 12.1H3"/><path d="M15.1 18.1H3"/></svg>
+                            <span>PDF Tools</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="nav-group">
+                    <div class="nav-group-title">Data & Text<span>6</span></div>
+                    <div class="nav-sub-menu">
+                        
+                        <a href="/ai-text-assistant" data-route data-name="ai text assistant" data-desc="rewrite, proofread, and compare text with local models." data-keywords="ai text assistant rewrite, proofread, and compare text with local models. proofread rewrite grammar text ai data data & text" >
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.5 2A5.5 5.5 0 0 0 4 7.5c0 1.1.3 2.1.9 3a5.5 5.5 0 0 0 1.1 9.5c1.1.4 2.3.6 3.5.6 1.2 0 2.4-.2 3.5-.6a5.5 5.5 0 0 0 1.1-9.5c.6-.9.9-1.9.9-3A5.5 5.5 0 0 0 14.5 2z"/></svg>
+                            <span>AI Text Assistant</span>
+                        </a>
+                        <a href="/data-encoders" data-route data-name="data encoders" data-desc="encode and decode base64, url, html, and hex values." data-keywords="data encoders encode and decode base64, url, html, and hex values. base64 url encode html encode hex encode data data & text text workbench deterministic text transforms, casing, and url inspection now share one focused workspace. compatibility route that opens data encoders. encoders data encoders case converter switch between common text casing conventions. camelcase snake_case kebab-case uppercase url parser break down urls, query params, and origins. url query params hostname search params" >
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+                            <span>Data Encoders</span>
+                        </a>
+                        <a href="/regex-tools" data-route data-name="regex tools" data-desc="test, explain, build, and replace with regular expressions." data-keywords="regex tools test, explain, build, and replace with regular expressions. regex regexp pattern matching replace groups generator data data & text" >
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                            <span>Regex Tools</span>
+                        </a>
+                        <a href="/lorem-ipsum" data-route data-name="lorem ipsum" data-desc="generate placeholder paragraphs and sentences." data-keywords="lorem ipsum generate placeholder paragraphs and sentences. placeholder dummy text copy filler data data & text" >
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 6.1H3"/><path d="M21 12.1H3"/><path d="M15.1 18.1H3"/></svg>
+                            <span>Lorem Ipsum</span>
+                        </a>
+                        <a href="/list-processor" data-route data-name="list processor" data-desc="sort, filter, deduplicate, and reshape lists." data-keywords="list processor sort, filter, deduplicate, and reshape lists. unique sort filter list dedupe data data & text" >
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+                            <span>List Processor</span>
+                        </a>
+                        <a href="/markdown-editor" data-route data-name="markdown editor" data-desc="edit markdown with live preview." data-keywords="markdown editor edit markdown with live preview. markdown md preview data data & text" >
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                            <span>Markdown Editor</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="nav-group">
+                    <div class="nav-group-title">Time & Units<span>3</span></div>
+                    <div class="nav-sub-menu">
+                        
+                        <a href="/time-studio" data-route data-name="time studio" data-desc="run timers, alarms, and epoch conversion from one workspace." data-keywords="time studio run timers, alarms, and epoch conversion from one workspace. timer stopwatch alarm epoch timestamp time time & units timing, epoch conversion, timezone planning, and calendar views now share one time workspace. compatibility route that opens time studio. time tools time studio epoch & date focused timestamp conversion view inside time studio. unix time date converter compatibility route that opens epoch & date. time converter epoch and date timezone converter convert time between global timezones. timezone utc local time zone calendar converter convert jalali and gregorian dates. jalali gregorian persian calendar compatibility route that opens calendar converter. calendar tool calendar converter" >
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                            <span>Time Studio</span>
+                        </a>
+                        <a href="/unit-converter" data-route data-name="unit converter" data-desc="convert across common measurement systems." data-keywords="unit converter convert across common measurement systems. unit length weight temperature time time & units" >
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polygon points="2 17 12 22 22 17"/><polygon points="2 12 12 17 22 12"/></svg>
+                            <span>Unit Converter</span>
+                        </a>
+                        <a href="/finance-calculator" data-route data-name="finance calculator" data-desc="calculate loans, interest, and taxes." data-keywords="finance calculator calculate loans, interest, and taxes. loan interest tax finance time time & units" >
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+                            <span>Finance Calculator</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="nav-group">
+                    <div class="nav-group-title">Network & DevOps<span>3</span></div>
+                    <div class="nav-sub-menu">
+                        
+                        <a href="/ip-and-subnet" data-route data-name="ip & subnet" data-desc="calculate cidr ranges and subnet details." data-keywords="ip & subnet calculate cidr ranges and subnet details. cidr subnet ipv4 network mask network network & devops" >
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/><path d="M10 17.5h4"/><path d="M17.5 10v4"/><path d="M17.5 17.5H21"/></svg>
+                            <span>IP & Subnet</span>
+                        </a>
+                        <a href="/devops-toolkit" data-route data-name="devops toolkit" data-desc="generate chmod modes and crontab schedules." data-keywords="devops toolkit generate chmod modes and crontab schedules. chmod cron crontab permissions network network & devops" >
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+                            <span>DevOps Toolkit</span>
+                        </a>
+                        <a href="/client-inspector" data-route data-name="client inspector" data-desc="inspect browser, device, and capability signals." data-keywords="client inspector inspect browser, device, and capability signals. user agent browser info capabilities network network & devops device lab environment signals, input diagnostics, and display tests now share one device-focused workspace. compatibility route that opens client inspector. client inspect client inspector input tester inspect keyboard, pointer, and interaction input. keyboard mouse pointer input latency display tester check monitor rendering and pixel behavior. display monitor dead pixel color test media media & design" >
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                            <span>Client Inspector</span>
+                        </a>
+                    </div>
+                </div>
+            </nav>
+        </aside>
+        <main id="content">
+            <div id="loading-overlay" class="hidden">
+              <div class="loading-shell">
+                <div class="spinner"></div>
+                <div class="loading-copy">
+                  <strong>Loading</strong>
+                  <span>Preparing workspace...</span>
+                </div>
+              </div>
+            </div>
+            <article>
+                <header>
+                    <nav id="route-breadcrumbs" class="route-breadcrumbs" aria-label="Breadcrumb"></nav>
+                    <h1>Dashboard</h1>
+                    <p>Overview of the available browser-native tools and studios.</p>
+                </header>
+                <div id="tool-root"></div>
+            </article>
+        </main>
+    </div>
+    <div id="toast-container"></div>
+</body>
+</html>
