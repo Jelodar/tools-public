@@ -1,0 +1,1 @@
+import{m as n,u as o}from"./device-lab-app-UXrB1sXs.js";import"./index-BgGesHSY.js";import"./ui-utils-CG6aKAAj.js";import"./studio-shell-Bc-X-4B_.js";async function c(t){await n(t,"client-inspect")}function e(){o()}export{c as mount,e as unmount};

@@ -1,0 +1,1 @@
+import{mount as t,unmount as o}from"./text-tools-CY1BRGli.js";import"./ui-monaco-Cg2YeCrj.js";import"./index-BgGesHSY.js";import"./ai-session-CWcDNJHJ.js";import"./ai-generation-CBvcWf5u.js";async function a(n){return t(n)}function c(){return o()}export{a as mount,c as unmount};

@@ -1,0 +1,1 @@
+import{mount as t,unmount as o}from"./client-inspect-B-IugRIx.js";import"./device-lab-app-UXrB1sXs.js";import"./index-BgGesHSY.js";import"./ui-utils-CG6aKAAj.js";import"./studio-shell-Bc-X-4B_.js";async function a(n){return t(n)}function c(){return o()}export{a as mount,c as unmount};
