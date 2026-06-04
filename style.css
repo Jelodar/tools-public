@@ -2710,6 +2710,41 @@ button.is-busy::before {
   gap: 0.55rem;
 }
 
+.webmedia-subtitle-source,
+.webmedia-subtitle-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+}
+
+.webmedia-subtitle-source span {
+  min-width: 0;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.webmedia-subtitle-editor-list {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.webmedia-subtitle-editor-row {
+  display: grid;
+  grid-template-columns: 2rem minmax(4.5rem, 0.7fr) minmax(4.5rem, 0.7fr) minmax(8rem, 1.6fr) auto;
+  align-items: center;
+  gap: 0.42rem;
+}
+
+.webmedia-subtitle-editor-row span {
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
 .webmedia-settings .studio-field {
   min-width: 0;
 }
@@ -3005,6 +3040,15 @@ button.is-busy::before {
 
   .webmedia-field-grid {
     grid-template-columns: 1fr;
+  }
+
+  .webmedia-subtitle-editor-row {
+    grid-template-columns: 1.5rem 1fr 1fr;
+  }
+
+  .webmedia-subtitle-editor-row input[data-webmedia-subtitle-field="text"],
+  .webmedia-subtitle-editor-row button {
+    grid-column: 2 / -1;
   }
 
   .webmedia-inspect-grid,

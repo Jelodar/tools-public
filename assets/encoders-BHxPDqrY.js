@@ -1,0 +1,1 @@
+import{m as n,u as t}from"./text-workbench-app-BljFH1aJ.js";import"./index-CGiSGYdp.js";import"./ui-utils-CG6aKAAj.js";import"./studio-shell-4kPB4zak.js";async function i(o){await n(o,"encoders")}function c(){t()}export{i as mount,c as unmount};

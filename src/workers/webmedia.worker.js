@@ -3,6 +3,10 @@ import {
   createWebMediaInspection,
   planWebMediaOperation
 } from '../utils/webmedia-plan.js';
+import {
+  buildWebMediaHlsPackageBlob,
+  buildWebMediaSubtitlePackageBlob
+} from '../utils/webmedia-package.js';
 
 const MEDIABUNNY_MODULE_URL = 'https://esm.sh/mediabunny@1.45.4';
 const activeJobs = new Map();
@@ -323,6 +327,54 @@ async function runWebMediaJob(payload = {}, { emit, jobs, context = {} }) {
     return;
   }
 
+  if (plan.execution === 'webmedia-subtitle-package') {
+    try {
+      const result = await runSubtitlePackageJob(plan, { emit });
+      emit({
+        type: 'result',
+        payload: result
+      });
+    } finally {
+      jobs.delete(jobId);
+    }
+    return;
+  }
+
+  if (plan.execution === 'webmedia-hls-package') {
+    if (!payload.mediaFile) {
+      emit({
+        type: 'error',
+        payload: {
+          code: 'WEBMEDIA_SOURCE_MISSING',
+          message: 'Original media file is required for HLS package export.',
+          recoverable: true
+        }
+      });
+      jobs.delete(jobId);
+      return;
+    }
+
+    try {
+      const result = await runHlsPackageJob(payload.mediaFile, plan, { emit, job, loadMediabunny: context.loadMediabunny });
+      emit({
+        type: 'result',
+        payload: result
+      });
+    } catch (error) {
+      emit({
+        type: 'error',
+        payload: normalizeWebMediaError(job.canceled ? {
+          code: 'JOB_CANCELED',
+          message: 'Job canceled.',
+          recoverable: true
+        } : error)
+      });
+    } finally {
+      jobs.delete(jobId);
+    }
+    return;
+  }
+
   emit({
     type: 'error',
     payload: {
@@ -342,6 +394,107 @@ function isMediabunnyConversionPlan(plan = {}) {
     ['remux', 'transcode', 'trim', 'transform', 'audio', 'subtitles'].includes(plan.operation) &&
     (!Array.isArray(plan.errors) || plan.errors.length === 0)
   );
+}
+
+async function runSubtitlePackageJob(plan, { emit }) {
+  emit({
+    type: 'progress',
+    payload: {
+      phase: 'subtitle-package',
+      percent: 40
+    }
+  });
+  const blob = await buildWebMediaSubtitlePackageBlob(plan);
+  emit({
+    type: 'progress',
+    payload: {
+      phase: 'subtitle-package',
+      percent: 100,
+      outputBytes: blob.size
+    }
+  });
+  return {
+    blob,
+    filename: buildWebMediaOutputName(plan.source?.fileName || 'media', plan),
+    mime: 'application/zip',
+    summary: { mode: 'Package', bytes: blob.size }
+  };
+}
+
+async function runHlsPackageJob(file, plan, { emit, job, loadMediabunny }) {
+  emit({
+    type: 'progress',
+    payload: {
+      phase: 'hls-package',
+      percent: 8,
+      processedBytes: 0
+    }
+  });
+  const segmentBlob = canUseSourceAsHlsSegment(plan)
+    ? file
+    : (await runMediabunnyConversionJob(file, createHlsSegmentPlan(plan), {
+      emit: (event) => {
+        if (event.type !== 'progress') {
+          emit(event);
+          return;
+        }
+        emit({
+          type: 'progress',
+          payload: {
+            ...event.payload,
+            phase: 'hls-package',
+            percent: Math.max(10, Math.min(88, Number(event.payload.percent || 0)))
+          }
+        });
+      },
+      job,
+      loadMediabunny
+    })).blob;
+
+  if (job.canceled) {
+    throw {
+      code: 'JOB_CANCELED',
+      message: 'Job canceled.',
+      recoverable: true
+    };
+  }
+
+  const blob = await buildWebMediaHlsPackageBlob(segmentBlob, plan);
+  emit({
+    type: 'progress',
+    payload: {
+      phase: 'hls-package',
+      percent: 100,
+      outputBytes: blob.size
+    }
+  });
+  return {
+    blob,
+    filename: buildWebMediaOutputName(plan.source?.fileName || file.name || 'media', plan),
+    mime: 'application/zip',
+    summary: { mode: 'Package', bytes: blob.size }
+  };
+}
+
+function canUseSourceAsHlsSegment(plan = {}) {
+  return plan.source?.container === 'mpegts' &&
+    !Object.keys(plan.conversion?.video || {}).length &&
+    !Object.keys(plan.conversion?.audio || {}).length;
+}
+
+function createHlsSegmentPlan(plan = {}) {
+  return {
+    ...plan,
+    targetContainer: 'mpegts',
+    output: {
+      container: 'mpegts',
+      label: 'MPEG-TS',
+      extension: 'ts',
+      mime: 'video/mp2t'
+    },
+    execution: 'mediabunny-conversion',
+    errors: []
+  };
 }
 
 async function runMediabunnyConversionJob(file, plan, { emit, job, loadMediabunny }) {

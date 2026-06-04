@@ -57,6 +57,12 @@ import {
   getTrackCopyName
 } from '../utils/audio-mixer.js';
 
+const PCM_RECORDER_WORKLET_URL = new URL('../workers/pcm-recorder.worklet.js', import.meta.url);
+
+export function getPcmRecorderWorkletUrl() {
+  return PCM_RECORDER_WORKLET_URL;
+}
+
 let container = null;
 let audioCtx = null;
 let stream = null;
@@ -2283,7 +2289,7 @@ async function startRecording() {
   const startPromise = (async () => {
     await initStudio();
     if (engine === 'wav') {
-      await audioCtx.audioWorklet.addModule('/src/workers/pcm-recorder.worklet.js');
+      await audioCtx.audioWorklet.addModule(PCM_RECORDER_WORKLET_URL);
       mediaRecorder = new AudioWorkletNode(audioCtx, 'pcm-recorder-processor');
       gateNode.connect(mediaRecorder);
       mediaRecorder.connect(audioCtx.destination);

@@ -6,6 +6,7 @@ import { renderToggleSwitch } from '../ui/form-controls.js';
 import { createMediaTrimmer } from '../ui/media-trimmer.js';
 import { downloadFile, showToast } from '../ui/ui-utils.js';
 import { captureVideoFrameStrip } from '../utils/media-visualization.js';
+import { normalizeSubtitleCues, parseWebMediaSubtitleText } from '../utils/webmedia-package.js';
 
 let container = null;
 let service = null;
@@ -25,6 +26,9 @@ let trimmer = null;
 let trimmerVisualToken = 0;
 let planUpdateTimer = 0;
 let lastUrgentDiagnosticKey = '';
+let subtitleFile = null;
+let subtitleCues = [];
+let subtitleFormat = 'auto';
 
 const WEBMEDIA_SPEED_PRESETS = {
   draft: {
@@ -206,6 +210,38 @@ function clampNumber(value, min, max) {
 
 function renderWebMediaToggle(id, label, checked = false) {
   return renderToggleSwitch({ id, label, checked, className: 'webmedia-toggle' });
+}
+
+function isWebMediaSubtitleFile(file = {}) {
+  const name = String(file.name || '').toLowerCase();
+  const type = String(file.type || '').toLowerCase();
+  return name.endsWith('.srt') ||
+    name.endsWith('.vtt') ||
+    type.includes('text/vtt') ||
+    type.includes('subrip') ||
+    type.includes('srt');
+}
+
+function inferWebMediaSubtitleFormat(file = {}, text = '', selected = 'auto') {
+  if (selected === 'srt' || selected === 'vtt') return selected;
+  const name = String(file.name || '').toLowerCase();
+  if (name.endsWith('.vtt') || /^\s*WEBVTT\b/i.test(String(text || ''))) return 'vtt';
+  if (name.endsWith('.srt')) return 'srt';
+  return 'auto';
+}
+
+function normalizeSubtitleEditorCues(cues = []) {
+  return Array.from(cues || []).map((cue, index) => {
+    const start = Math.max(0, Number(cue?.start) || 0);
+    const end = Math.max(start + 0.1, Number(cue?.end) || start + 2);
+    return {
+      id: cue?.id || `cue-${Date.now()}-${index + 1}`,
+      index: index + 1,
+      start,
+      end,
+      text: String(cue?.text ?? '')
+    };
+  });
 }
 
 function formatDiagnosticLabel(value = '') {
@@ -708,6 +744,8 @@ export async function mount(parent) {
                 </label>
                 <label class="studio-field"><span>Language</span><input id="webmedia-subtitle-language" type="text" placeholder="eng"></label>
                 <label class="studio-field"><span>Offset sec</span><input id="webmedia-subtitle-offset" type="number" step="0.01" value="0"></label>
+                <label class="studio-field"><span>Color</span><input id="webmedia-subtitle-color" type="color" value="#ffdc00"></label>
+                <label class="studio-field"><span>Font</span><input id="webmedia-subtitle-font-family" type="text" value="Arial"></label>
                 <label class="studio-field"><span>Font Size</span><input id="webmedia-subtitle-font-size" type="number" min="0" max="160" step="1" value="0"></label>
                 <label class="studio-field">
                   <span>Position</span>
@@ -724,6 +762,19 @@ export async function mount(parent) {
                 ${renderWebMediaToggle('webmedia-subtitle-burn', 'Burn in')}
                 ${renderWebMediaToggle('webmedia-subtitle-background', 'Text background')}
               </div>
+            </div>
+            <div class="webmedia-adjustment-section">
+              <div class="webmedia-subtitle-source">
+                <button id="webmedia-subtitle-upload" type="button" class="btn-secondary">Upload SRT/VTT</button>
+                <span id="webmedia-subtitle-info">No subtitle file</span>
+              </div>
+              <div class="webmedia-subtitle-actions">
+                <button id="webmedia-subtitle-add" type="button" class="btn-secondary">Add Cue</button>
+                <label class="studio-field"><span>Shift sec</span><input id="webmedia-subtitle-shift-amount" type="number" step="0.1" value="0.5"></label>
+                <button id="webmedia-subtitle-shift" type="button" class="btn-secondary">Shift All</button>
+                <button id="webmedia-subtitle-clear" type="button" class="btn-secondary">Clear</button>
+              </div>
+              <div id="webmedia-subtitle-editor-list" class="webmedia-subtitle-editor-list"></div>
             </div>
           </section>
 
@@ -804,6 +855,7 @@ export async function mount(parent) {
   const refs = {
     shell: container.querySelector('.webmedia-shell'),
     fileInput: container.querySelector('#webmedia-file-input'),
+    subtitleFileInput: container.querySelector('#webmedia-subtitle-file-input'),
     importButton: container.querySelector('#webmedia-import'),
     dropzone: container.querySelector('#webmedia-dropzone'),
     fileQueue: container.querySelector('#webmedia-file-queue'),
@@ -835,7 +887,13 @@ export async function mount(parent) {
     outputDownload: container.querySelector('#webmedia-output-download'),
     outputVideo: container.querySelector('#webmedia-output-video'),
     outputAudio: container.querySelector('#webmedia-output-audio'),
-    outputMeta: container.querySelector('#webmedia-output-meta')
+    outputMeta: container.querySelector('#webmedia-output-meta'),
+    subtitleUpload: container.querySelector('#webmedia-subtitle-upload'),
+    subtitleInfo: container.querySelector('#webmedia-subtitle-info'),
+    subtitleEditorList: container.querySelector('#webmedia-subtitle-editor-list'),
+    subtitleAdd: container.querySelector('#webmedia-subtitle-add'),
+    subtitleShift: container.querySelector('#webmedia-subtitle-shift'),
+    subtitleClear: container.querySelector('#webmedia-subtitle-clear')
   };
 
   const setStatus = (message, tone = 'neutral') => {
@@ -1291,15 +1349,19 @@ export async function mount(parent) {
     },
     subtitles: {
       mode: value('webmedia-subtitle-mode'),
-      importText: checked('webmedia-subtitle-import'),
+      importText: checked('webmedia-subtitle-import') || subtitleCues.length > 0,
       burnIn: checked('webmedia-subtitle-burn'),
       language: value('webmedia-subtitle-language'),
       sourceFormat: value('webmedia-subtitle-source-format'),
+      fileName: subtitleFile?.name || '',
       offset: number('webmedia-subtitle-offset'),
+      color: value('webmedia-subtitle-color'),
+      fontFamily: value('webmedia-subtitle-font-family'),
       fontSize: number('webmedia-subtitle-font-size'),
       position: value('webmedia-subtitle-position'),
       outline: number('webmedia-subtitle-outline'),
-      background: checked('webmedia-subtitle-background')
+      background: checked('webmedia-subtitle-background'),
+      cues: subtitleCues
     },
     hls: {
       segmentDuration: number('webmedia-hls-segment-duration'),
@@ -1677,6 +1739,101 @@ export async function mount(parent) {
     }, delay);
   };
 
+  const setSubtitleImportState = (importing) => {
+    setElementChecked(container, 'webmedia-subtitle-import', importing);
+  };
+
+  const syncSubtitleInfo = () => {
+    if (!refs.subtitleInfo) return;
+    refs.subtitleInfo.textContent = subtitleFile?.name || (subtitleCues.length ? 'Inline subtitles' : 'No subtitle file');
+  };
+
+  const setSubtitleEditorCues = (cues, options = {}) => {
+    subtitleCues = normalizeSubtitleEditorCues(cues);
+    if (options.importText !== false) setSubtitleImportState(subtitleCues.length > 0 || Boolean(subtitleFile));
+    renderSubtitleEditor();
+    if (options.plan !== false) schedulePlanUpdate(options.delay ?? 0);
+  };
+
+  const renderSubtitleEditor = () => {
+    syncSubtitleInfo();
+    if (!refs.subtitleEditorList) return;
+    refs.subtitleEditorList.innerHTML = subtitleCues.length
+      ? subtitleCues.map((cue, index) => `
+        <div class="webmedia-subtitle-editor-row" data-webmedia-subtitle-cue="${escapeHtml(cue.id)}">
+          <span>${index + 1}</span>
+          <input data-webmedia-subtitle-field="start" type="number" min="0" step="0.1" value="${escapeHtml(cue.start)}">
+          <input data-webmedia-subtitle-field="end" type="number" min="0.1" step="0.1" value="${escapeHtml(cue.end)}">
+          <input data-webmedia-subtitle-field="text" value="${escapeHtml(cue.text)}">
+          <button type="button" class="btn-secondary" data-webmedia-subtitle-remove="${escapeHtml(cue.id)}">Remove</button>
+        </div>
+      `).join('')
+      : '<div class="webmedia-empty">Subtitle cues appear here.</div>';
+    refs.subtitleEditorList.querySelectorAll('[data-webmedia-subtitle-field]').forEach((input) => {
+      input.addEventListener('input', () => {
+        const row = input.closest('[data-webmedia-subtitle-cue]');
+        const cue = subtitleCues.find((entry) => entry.id === row?.dataset.webmediaSubtitleCue);
+        if (!cue) return;
+        const field = input.dataset.webmediaSubtitleField;
+        cue[field] = field === 'text' ? input.value : Number(input.value);
+        if (Number(cue.end) <= Number(cue.start)) cue.end = Number(cue.start) + 0.1;
+        subtitleCues = normalizeSubtitleEditorCues(subtitleCues);
+        setSubtitleImportState(true);
+        schedulePlanUpdate(120);
+      });
+    });
+    refs.subtitleEditorList.querySelectorAll('[data-webmedia-subtitle-remove]').forEach((button) => {
+      button.addEventListener('click', () => {
+        setSubtitleEditorCues(subtitleCues.filter((cue) => cue.id !== button.dataset.webmediaSubtitleRemove));
+      });
+    });
+  };
+
+  const handleSubtitleFile = async (file) => {
+    if (!file) return;
+    try {
+      const text = await file.text();
+      subtitleFile = file;
+      subtitleFormat = inferWebMediaSubtitleFormat(file, text, value('webmedia-subtitle-source-format') || 'auto');
+      if (subtitleFormat !== 'auto') setElementValue(container, 'webmedia-subtitle-source-format', subtitleFormat);
+      setSubtitleEditorCues(parseWebMediaSubtitleText(text, subtitleFormat));
+      setStatus('Subtitle file loaded.', 'success');
+    } catch (error) {
+      renderDiagnostics([{ code: 'WEBMEDIA_SUBTITLE_IMPORT_FAILED', message: error.message || 'Subtitle file could not be read.', tone: 'danger' }]);
+      setStatus('Subtitle import failed.', 'danger');
+    }
+  };
+
+  const addSubtitleCue = () => {
+    const start = Number(refs.previewMedia.currentTime || 0);
+    const duration = getActiveDuration();
+    const end = duration ? Math.min(duration, start + 2) : start + 2;
+    setSubtitleEditorCues([...subtitleCues, {
+      id: `cue-${Date.now()}-${subtitleCues.length + 1}`,
+      start,
+      end: Math.max(start + 0.1, end),
+      text: 'Subtitle'
+    }]);
+  };
+
+  const shiftSubtitleCues = () => {
+    const amount = number('webmedia-subtitle-shift-amount');
+    setSubtitleEditorCues(subtitleCues.map((cue) => {
+      const start = Math.max(0, Number(cue.start || 0) + amount);
+      const end = Math.max(start + 0.1, Number(cue.end || 0) + amount);
+      return { ...cue, start, end };
+    }));
+  };
+
+  const clearSubtitles = () => {
+    subtitleFile = null;
+    subtitleFormat = 'auto';
+    refs.subtitleFileInput.value = '';
+    setElementValue(container, 'webmedia-subtitle-source-format', 'auto');
+    setSubtitleImportState(false);
+    setSubtitleEditorCues([], { importText: false });
+  };
+
   trimmer?.destroy();
   trimmer = createMediaTrimmer({
     mount: refs.trimmerHost,
@@ -1760,7 +1917,11 @@ export async function mount(parent) {
     event.preventDefault();
     event.stopPropagation();
     refs.dropzone.classList.remove('is-dragging');
-    setFiles(event.dataTransfer?.files || []);
+    const droppedFiles = Array.from(event.dataTransfer?.files || []);
+    const subtitle = droppedFiles.find(isWebMediaSubtitleFile);
+    const media = droppedFiles.filter((file) => !isWebMediaSubtitleFile(file));
+    if (media.length) setFiles(media);
+    if (subtitle) handleSubtitleFile(subtitle);
   };
 
   refs.dropzone.addEventListener('dragover', handleDragOver);
@@ -1814,6 +1975,11 @@ export async function mount(parent) {
     if (!activeOutputBlob) return;
     downloadFile(activeOutputBlob, activeOutputName, activeOutputMime);
   });
+  refs.subtitleUpload.addEventListener('click', () => refs.subtitleFileInput.click());
+  refs.subtitleFileInput.addEventListener('change', (event) => handleSubtitleFile(event.target.files?.[0]));
+  refs.subtitleAdd.addEventListener('click', addSubtitleCue);
+  refs.subtitleShift.addEventListener('click', shiftSubtitleCues);
+  refs.subtitleClear.addEventListener('click', clearSubtitles);
   refs.previewMedia.addEventListener('loadedmetadata', () => {
     syncTrimmerToInspection();
     hydrateTrimmerVisuals();
@@ -1943,6 +2109,7 @@ export async function mount(parent) {
   renderModePanels();
   renderQueue();
   renderInspection();
+  renderSubtitleEditor();
   renderDiagnostics();
 }
 
@@ -1969,5 +2136,8 @@ export function unmount() {
   activeOutputBlob = null;
   activeOutputName = '';
   activeOutputMime = '';
+  subtitleFile = null;
+  subtitleCues = [];
+  subtitleFormat = 'auto';
   lastUrgentDiagnosticKey = '';
 }

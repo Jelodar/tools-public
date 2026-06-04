@@ -112,6 +112,11 @@ const ARCHIVE_ERROR_PATTERNS = [
     preserveMessage: true
   }
 ];
+const DEFAULT_ARCHIVE_WORKER_URL = new URL('../workers/archive.worker.js', import.meta.url);
+
+export function getArchiveWorkerUrl(options = {}) {
+  return options.workerUrl || DEFAULT_ARCHIVE_WORKER_URL;
+}
 
 function getZipLoader(options = {}) {
   if (typeof options.loadZip === 'function') return options.loadZip;
@@ -255,7 +260,7 @@ function runArchiveWorker(type, payload, transferables = [], options = {}) {
   }
   const WorkerCtor = options.Worker || globalThis.Worker;
   if (typeof WorkerCtor !== 'function') throw new Error('Archive worker is unavailable.');
-  const workerUrl = options.workerUrl || new URL('../workers/archive.worker.js', import.meta.url);
+  const workerUrl = getArchiveWorkerUrl(options);
   const worker = new WorkerCtor(workerUrl, { type: 'module', name: 'archive-tools-wasm' });
   return new Promise((resolve, reject) => {
     const finish = (callback) => {

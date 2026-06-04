@@ -1,5 +1,11 @@
+const DEFAULT_TASK_WORKER_URL = new URL('./task.worker.js', import.meta.url);
+
+export function getDefaultTaskWorkerUrl() {
+  return DEFAULT_TASK_WORKER_URL;
+}
+
 export class WorkerPool {
-  constructor(workerScript = '/src/workers/task.worker.js', maxWorkers = typeof navigator !== 'undefined' ? navigator.hardwareConcurrency || 4 : 4) {
+  constructor(workerScript = getDefaultTaskWorkerUrl(), maxWorkers = typeof navigator !== 'undefined' ? navigator.hardwareConcurrency || 4 : 4) {
     this.workerScript = workerScript;
     this.maxWorkers = maxWorkers;
     this.queue = [];
@@ -88,7 +94,7 @@ export class WorkerPool {
   }
 
   getAvailableWorker() {
-    return new Worker(new URL('./task.worker.js', import.meta.url), { type: 'module' });
+    return new Worker(this.workerScript, { type: 'module' });
   }
 }
 

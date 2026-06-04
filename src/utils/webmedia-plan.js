@@ -1,3 +1,5 @@
+import { normalizeSubtitleCues, normalizeWebMediaSubtitleStyle } from './webmedia-package.js';
+
 const MIME_CONTAINER = new Map([
   ['video/mp4', 'mp4'],
   ['audio/mp4', 'mp4'],
@@ -301,6 +303,9 @@ export function planWebMediaOperation(input = {}) {
   const conversion = buildWebMediaConversionPlan(operation, source, settings, targetContainer);
   const remuxOnly = Boolean(input.remuxOnly ?? settings.remux.remuxOnly);
   const transformRequiresReencode = conversion.requiresReencode;
+  const hlsPackage = operation === 'hls' || targetContainer === 'hls';
+  const subtitlePackage = operation === 'subtitles' && settings.subtitles.importText;
+  const packageMode = hlsPackage || subtitlePackage;
 
   if (source.container === 'unknown') {
     errors.push({
@@ -309,17 +314,10 @@ export function planWebMediaOperation(input = {}) {
     });
   }
 
-  if (operation === 'hls' || targetContainer === 'hls') {
-    errors.push({
-      code: 'WEBMEDIA_HLS_EXPORT_PENDING',
-      message: 'HLS packaging requires segmented output handling and is not enabled in Web Media Studio yet.'
-    });
-  }
-
-  if (settings.subtitles.importText) {
-    errors.push({
-      code: 'WEBMEDIA_EXTERNAL_SUBTITLE_PENDING',
-      message: 'External subtitle import is planned but not enabled for browser-native muxing yet.'
+  if (subtitlePackage && !settings.subtitles.cues.length) {
+    warnings.push({
+      code: 'WEBMEDIA_SUBTITLE_TEXT_EMPTY',
+      message: 'Subtitle package will export an empty WebVTT sidecar until cues are added.'
     });
   }
 
@@ -354,7 +352,7 @@ export function planWebMediaOperation(input = {}) {
     });
   }
 
-  const incompatibleTracks = plannedOutputTracks.filter((track) => !canContainerCarryTrack(targetContainer, track));
+  const incompatibleTracks = packageMode ? [] : plannedOutputTracks.filter((track) => !canContainerCarryTrack(targetContainer, track));
   if (incompatibleTracks.length) {
     errors.push({
       code: 'TARGET_CONTAINER_CODEC_UNSUPPORTED',
@@ -379,9 +377,15 @@ export function planWebMediaOperation(input = {}) {
   let mode = 'Remux';
   if (operation === 'inspect') mode = 'Inspect';
   else if (errors.length) mode = 'Blocked';
+  else if (packageMode) mode = 'Package';
   else if (operation === 'audio') mode = 'Audio';
   else if (transformRequiresReencode || operation === 'transcode') mode = 'Transcode';
   else if (operation === 'trim' && settings.trim.mode === 'packet') mode = 'Remux';
+
+  const output = getWebMediaPlanOutput(operation, targetContainer, outputContainer, {
+    hlsPackage,
+    subtitlePackage
+  });
 
   return {
     operation,
@@ -390,15 +394,18 @@ export function planWebMediaOperation(input = {}) {
     targetContainer,
     requiresReencode: transformRequiresReencode,
     remuxOnly,
-    execution: operation === 'inspect' ? 'inspect-report' : errors.length ? 'blocked' : 'mediabunny-conversion',
+    execution: operation === 'inspect'
+      ? 'inspect-report'
+      : errors.length
+        ? 'blocked'
+        : hlsPackage
+          ? 'webmedia-hls-package'
+          : subtitlePackage
+            ? 'webmedia-subtitle-package'
+            : 'mediabunny-conversion',
     settings,
     conversion: pruneConversionPlan(conversion),
-    output: {
-      container: targetContainer,
-      label: outputContainer.label,
-      extension: operation === 'inspect' ? 'json' : outputContainer.extension,
-      mime: operation === 'inspect' ? 'application/json' : outputContainer.mime
-    },
+    output,
     warnings,
     errors
   };
@@ -542,11 +549,13 @@ function normalizeWebMediaSettings(input = {}, operation = 'inspect') {
       burnIn: Boolean(subtitles.burnIn),
       language: String(subtitles.language || '').trim(),
       sourceFormat: SUBTITLE_FORMAT_VALUES.has(subtitles.sourceFormat) ? subtitles.sourceFormat : 'auto',
+      fileName: String(subtitles.fileName || '').trim(),
       offset: signedNumber(subtitles.offset),
-      fontSize: clampInteger(subtitles.fontSize, 0, 160),
+      ...normalizeWebMediaSubtitleStyle(subtitles),
       position: SUBTITLE_POSITION_VALUES.has(subtitles.position) ? subtitles.position : 'bottom',
       outline: positiveNumber(subtitles.outline),
-      background: Boolean(subtitles.background)
+      background: Boolean(subtitles.background),
+      cues: normalizeSubtitleCues(subtitles.cues)
     },
     hls: {
       segmentDuration: clampNumber(hls.segmentDuration || 6, 1, 30),
@@ -616,7 +625,7 @@ function buildWebMediaConversionPlan(operation, source, settings, targetContaine
 
   if (operation === 'hls') {
     conversion.package = buildHlsPackage(settings.hls);
-    conversion.requiresReencode = true;
+    applyHlsPackagingOptions(conversion, source);
   }
 
   if (operation === 'remux' || operation === 'subtitles') {
@@ -701,12 +710,18 @@ function normalizeAudioAdjustmentPlan(audio = {}, trim = {}) {
 
 function normalizeSubtitleAdjustmentPlan(subtitles = {}) {
   const output = {};
+  if (!subtitles.importText) return output;
   if (subtitles.sourceFormat !== 'auto') output.sourceFormat = subtitles.sourceFormat;
+  if (subtitles.fileName) output.fileName = subtitles.fileName;
+  if (subtitles.language) output.language = subtitles.language;
   if (subtitles.offset !== 0) output.offset = subtitles.offset;
   if (subtitles.fontSize > 0) output.fontSize = subtitles.fontSize;
+  if (subtitles.color) output.color = subtitles.color;
+  if (subtitles.fontFamily) output.fontFamily = subtitles.fontFamily;
   if (subtitles.position !== 'bottom') output.position = subtitles.position;
   if (subtitles.outline > 0) output.outline = subtitles.outline;
   if (subtitles.background) output.background = true;
+  if (subtitles.cues.length) output.cues = subtitles.cues;
   return output;
 }
 
@@ -732,6 +747,53 @@ function applySimpleTrackDrop(conversion, source, targetContainer) {
   if (audioTracks.length && audioTracks.every((track) => !canContainerCarryTrack(targetContainer, track))) {
     conversion.audio.discard = true;
   }
+}
+
+function applyHlsPackagingOptions(conversion, source) {
+  const videoTracks = source.tracks.filter((track) => track.kind === 'video');
+  const audioTracks = source.tracks.filter((track) => track.kind === 'audio');
+  if (videoTracks.some((track) => !['h264', 'hevc'].includes(normalizeCodec(track.codec)))) {
+    conversion.video.codec = 'avc';
+    conversion.video.forceTranscode = true;
+  }
+  if (audioTracks.some((track) => !['aac', 'mp3'].includes(normalizeCodec(track.codec)))) {
+    conversion.audio.codec = 'aac';
+    conversion.audio.forceTranscode = true;
+  }
+  conversion.requiresReencode = needsVideoReencode(conversion.video) || needsAudioReencode(conversion.audio);
+}
+
+function getWebMediaPlanOutput(operation, targetContainer, outputContainer, options = {}) {
+  if (operation === 'inspect') {
+    return {
+      container: targetContainer,
+      label: outputContainer.label,
+      extension: 'json',
+      mime: 'application/json'
+    };
+  }
+  if (options.hlsPackage) {
+    return {
+      container: 'hls',
+      label: 'HLS package',
+      extension: 'zip',
+      mime: 'application/zip'
+    };
+  }
+  if (options.subtitlePackage) {
+    return {
+      container: targetContainer,
+      label: 'Subtitle package',
+      extension: 'zip',
+      mime: 'application/zip'
+    };
+  }
+  return {
+    container: targetContainer,
+    label: outputContainer.label,
+    extension: outputContainer.extension,
+    mime: outputContainer.mime
+  };
 }
 
 function buildVideoOptions(input = {}) {

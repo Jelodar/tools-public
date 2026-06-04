@@ -1,1 +1,0 @@
-import{m as t,u as n}from"./text-workbench-app-iRZQekfL.js";import"./index-BgGesHSY.js";import"./ui-utils-CG6aKAAj.js";import"./studio-shell-Bc-X-4B_.js";async function a(o){await t(o,"url-parser")}function e(){n()}export{a as mount,e as unmount};
