@@ -1,1 +1,0 @@
-import{m as t,u as m}from"./json-suite-app-DJ9ZKtSQ.js";import"./index-CGiSGYdp.js";import"./pool-B2l5l6Kc.js";import"./ui-monaco-Rf0BXOV8.js";import"./ui-utils-CG6aKAAj.js";import"./tool-state-B_5q_c8d.js";import"./studio-shell-4kPB4zak.js";async function c(o){await t(o,"json-quick-format")}function f(){m()}export{c as mount,f as unmount};
