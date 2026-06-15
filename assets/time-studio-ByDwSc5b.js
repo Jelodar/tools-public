@@ -1,0 +1,1 @@
+import{mount as n,unmount as o}from"./time-tools-70uF4e83.js";import"./time-studio-app-DXgPtJQ-.js";import"./index-CoRJqXFF.js";import"./ui-utils-CG6aKAAj.js";import"./studio-CKR8zP_U.js";import"./studio-shell-DviRgtfh.js";async function c(t){return n(t)}function e(){return o()}export{c as mount,e as unmount};

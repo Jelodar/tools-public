@@ -1,1 +1,0 @@
-import{m as t,u as n}from"./dev-workbench-app-BqO_B4a3.js";import"./index-7hsJjH-u.js";import"./ui-monaco-CfmXKXq9.js";import"./ui-utils-CG6aKAAj.js";import"./studio-CKR8zP_U.js";import"./studio-shell-CJCNPGLr.js";async function p(o){await t(o,"base-calc")}function e(){n()}export{p as mount,e as unmount};
