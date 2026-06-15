@@ -1,0 +1,1 @@
+import{m as t,u as n}from"./json-suite-app-ClavCz1X.js";import"./index-7hsJjH-u.js";import"./pool-CFv1-M46.js";import"./ui-monaco-CfmXKXq9.js";import"./ui-utils-CG6aKAAj.js";import"./tool-state-B_5q_c8d.js";import"./studio-shell-CJCNPGLr.js";async function c(o){await t(o,"json-suite")}function f(){n()}export{c as mount,f as unmount};

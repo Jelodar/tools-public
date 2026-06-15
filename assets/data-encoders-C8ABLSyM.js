@@ -1,0 +1,1 @@
+import{mount as t,unmount as o}from"./encoders-C9R6Ywbc.js";import"./text-workbench-app-C0WfYarB.js";import"./index-7hsJjH-u.js";import"./ui-utils-CG6aKAAj.js";import"./studio-shell-CJCNPGLr.js";async function a(n){return t(n)}function c(){return o()}export{a as mount,c as unmount};

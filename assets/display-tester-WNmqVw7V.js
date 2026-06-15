@@ -1,0 +1,1 @@
+import{m as o,u as n}from"./device-lab-app-D0HNhMTo.js";import"./index-7hsJjH-u.js";import"./ui-utils-CG6aKAAj.js";import"./studio-shell-CJCNPGLr.js";async function e(t){await o(t,"display-tester")}function r(){n()}export{e as mount,r as unmount};
