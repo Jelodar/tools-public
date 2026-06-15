@@ -1,1 +1,0 @@
-import{mount as t,unmount as o}from"./svg-editor-nWlillpR.js";import"./design-studio-app-B84tU5xt.js";import"./index-B6SKL95y.js";import"./ui-utils-CG6aKAAj.js";import"./studio-shell-l5xydeJR.js";async function a(n){return t(n)}function c(){return o()}export{a as mount,c as unmount};

@@ -1,1 +1,0 @@
-import{m as t,u as n}from"./design-studio-app-B84tU5xt.js";import"./index-B6SKL95y.js";import"./ui-utils-CG6aKAAj.js";import"./studio-shell-l5xydeJR.js";async function s(o){await t(o,"svg-editor")}function a(){n()}export{s as mount,a as unmount};
