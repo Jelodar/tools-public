@@ -1,0 +1,1 @@
+import{mount as t,unmount as m}from"./code-editor-VP9_AYR4.js";import"./ui-utils-CG6aKAAj.js";import"./ui-monaco-CYGMk8iF.js";import"./index-B6SKL95y.js";import"./ai-session-CFFiJM4b.js";import"./shortcuts-Ce4UhY-H.js";import"./modal-DKefIaRW.js";import"./tool-state-B_5q_c8d.js";async function s(o){await t(o,{mode:"format"})}function e(){m()}export{s as mount,e as unmount};

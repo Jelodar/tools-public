@@ -1,0 +1,1 @@
+import{mount as n,unmount as o}from"./audio-lab-DJFgnnDy.js";import"./audio-context-DqMvUB_Q.js";import"./ffmpeg-service-Tk-z7e4t.js";import"./pool-B2l5l6Kc.js";import"./index-B6SKL95y.js";import"./media-session-BHNa2ppJ.js";async function c(t){return n(t)}function e(){return o()}export{c as mount,e as unmount};

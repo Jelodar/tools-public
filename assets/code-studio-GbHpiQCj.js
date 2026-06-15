@@ -1,0 +1,1 @@
+import{mount as o,unmount as n}from"./code-editor-VP9_AYR4.js";import"./ui-utils-CG6aKAAj.js";import"./ui-monaco-CYGMk8iF.js";import"./index-B6SKL95y.js";import"./ai-session-CFFiJM4b.js";import"./shortcuts-Ce4UhY-H.js";import"./modal-DKefIaRW.js";import"./tool-state-B_5q_c8d.js";async function f(t){return o(t)}function s(){return n()}export{f as mount,s as unmount};
