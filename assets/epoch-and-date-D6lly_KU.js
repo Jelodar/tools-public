@@ -1,1 +1,0 @@
-import{m as t,u as m}from"./time-studio-app-D8USjONc.js";import"./index-notwamio.js";import"./ui-utils-CG6aKAAj.js";import"./studio-CKR8zP_U.js";import"./studio-shell-DeJ2dW5c.js";async function r(o){await t(o,"epoch-and-date")}function e(){m()}export{r as mount,e as unmount};

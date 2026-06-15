@@ -5025,7 +5025,7 @@ button:disabled { opacity: 0.4; cursor: not-allowed; transform: none !important;
 }
 
 .media-trimmer-loading {
-  position: absolute;
+  position: fixed;
   bottom: 12px;
   left: 12px;
   right: 12px;
