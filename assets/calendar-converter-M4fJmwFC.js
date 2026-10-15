@@ -1,0 +1,1 @@
+import{m as t,u as m}from"./time-studio-app-DS0Hp2hu.js";import"./index-ATPg-6Fd.js";import"./ui-utils-BycjcbQ0.js";import"./studio-CKR8zP_U.js";import"./studio-shell-DA5EhZrc.js";async function e(o){await t(o,"calendar-converter")}function p(){m()}export{e as mount,p as unmount};

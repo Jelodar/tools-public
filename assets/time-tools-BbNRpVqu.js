@@ -1,0 +1,1 @@
+import{m as t,u as m}from"./time-studio-app-DS0Hp2hu.js";import"./index-ATPg-6Fd.js";import"./ui-utils-BycjcbQ0.js";import"./studio-CKR8zP_U.js";import"./studio-shell-DA5EhZrc.js";async function a(o){await t(o,"time-tools")}function e(){m()}export{a as mount,e as unmount};

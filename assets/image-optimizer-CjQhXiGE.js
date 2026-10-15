@@ -1,0 +1,1 @@
+import{mount as t,unmount as o}from"./image-compressor-CoQnO0pN.js";import"./drag-drop-ekerx5Fy.js";import"./ui-utils-BycjcbQ0.js";async function i(n){return t(n)}function p(){return o()}export{i as mount,p as unmount};
